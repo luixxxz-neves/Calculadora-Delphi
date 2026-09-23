@@ -1,4 +1,4 @@
-unit FormCalculadora;
+﻿unit FormCalculadora;
 
 interface
 
@@ -85,10 +85,13 @@ end;
 
 procedure TCalculadora.ElevaADoisClick(Sender: TObject);
 begin
-   Num := MemoTerminal.Text;
-   Num := FloatToStr(Sqr(StrToFloat(num)));
-   MemoTerminal.Text := num;
-   LimpaCache;
+   if MemoTerminal.Text <> '' then
+   begin
+      Num := MemoTerminal.Text;
+      Num := FloatToStr(Sqr(StrToFloat(num)));
+      MemoTerminal.Text := num;
+      LimpaCache;
+   end;
 end;
 
 procedure TCalculadora.FormCreate(Sender: TObject);
@@ -106,10 +109,13 @@ end;
 
 procedure TCalculadora.FracaoClick(Sender: TObject);
 begin
-   Num := MemoTerminal.Text;
-   Num := FloatToStr(1 / StrToFloat(Num));
-   MemoTerminal.Text := Num;
-   LimpaCache;
+   if MemoTerminal.Text <> '' then
+   begin
+      Num := MemoTerminal.Text;
+      Num := FloatToStr(1 / StrToFloat(Num));
+      MemoTerminal.Text := Num;
+      LimpaCache;
+   end;
 end;
 
 procedure TCalculadora.BackSpaceClick(Sender: TObject);
@@ -131,20 +137,22 @@ var
    Texto : String;
 begin
    Texto := MemoTerminal.Text;
-
-   for I := Length(text) Downto 1 do
+   if texto <> '' then
    begin
-      if Texto[i] in ['0' .. '9', ','] then
-         Delete(Texto, I, 1)
-      else
+      for I := Length(text) Downto 1 do
       begin
-         if Length(Texto) < Length(MemoTerminal.Text) then
-            Break;
+         if Texto[i] in ['0' .. '9', ','] then
+            Delete(Texto, I, 1)
+         else
+         begin
+            if Length(Texto) < Length(MemoTerminal.Text) then
+               Break;
+         end;
       end;
+      MemoTerminal.text := Texto;
+      MemoTerminal.SelStart := Length(MemoTerminal.Text);
+      LimpaCache
    end;
-   MemoTerminal.text := Texto;
-   MemoTerminal.SelStart := Length(MemoTerminal.Text);
-   LimpaCache
 end;
 
 procedure TCalculadora.CloseClick(Sender: TObject);
@@ -212,6 +220,10 @@ begin
          if panelAtual.Name = 'Resultado' then
             ResultadoClick(Sender);
 
+      if (MatchStr(panelAtual.Name, ['Adicao', 'Divisao', 'Subtracao',
+         'Multiplicacao', 'Virgula'])) and (MemoTerminal.Text = '') then
+         Exit;
+
       if not MatchStr(panelAtual.Name, ['Clear', 'ClearUltimoNumero', 'BackSpace',
       'RaizQuadrada','ElevaADois', 'Fracao', 'InverterSinal', 'Resultado', 'Porcentagem'])
       then
@@ -223,18 +235,24 @@ end;
 
 procedure TCalculadora.PorcentagemClick(Sender: TObject);
 begin
-   Num := MemoTerminal.Text;
-   Num := FloatToStr(StrToFloat(Num) / 100);
-   MemoTerminal.Text := Num;
-   LimpaCache;
+   if MemoTerminal.Text <> '' then
+   begin
+      Num := MemoTerminal.Text;
+      Num := FloatToStr(StrToFloat(Num) / 100);
+      MemoTerminal.Text := Num;
+      LimpaCache;
+   end;
 end;
 
 procedure TCalculadora.RaizQuadradaClick(Sender: TObject);
 begin
-   Num := MemoTerminal.Text;
-   Num := FloatToStr(Sqrt(StrToFloat(num)));
-   MemoTerminal.Text := num;
-   LimpaCache;
+   if MemoTerminal.Text <> '' then
+   begin
+      Num := MemoTerminal.Text;
+      Num := FloatToStr(Sqrt(StrToFloat(num)));
+      MemoTerminal.Text := num;
+      LimpaCache;
+   end;
 end;
 
 procedure TCalculadora.ResultadoClick(Sender: TObject);
@@ -274,7 +292,7 @@ var
    function ObterPrecedencia(Op: Char): Integer;
    begin
       if (Op = '+') or (Op = '-') then Result := 1
-      else if (Op = 'X') or (Op = '�') then Result := 2
+      else if (Op = 'X') or (Op = '÷') then Result := 2
       else Result := 0;
    end;
 
@@ -295,7 +313,7 @@ var
       '+': SubTotal := NumEsquerda + NumDireita;
       '-': SubTotal := NumEsquerda - NumDireita;
       'X': SubTotal := NumEsquerda * NumDireita;
-      '�': if NumDireita <> 0 then SubTotal := NumEsquerda / NumDireita;
+      '÷': if NumDireita <> 0 then SubTotal := NumEsquerda / NumDireita;
    end;
       PushNumero(SubTotal);
    end;
@@ -316,7 +334,7 @@ begin
          if Caractere = '.' then Caractere := ',';
          NumeroAtualStr := NumeroAtualStr + Caractere;
       end
-      else if Caractere in ['+', '-', 'X', '�'] then
+      else if Caractere in ['+', '-', 'X', '÷'] then
       begin
          if NumeroAtualStr <> '' then
          begin
