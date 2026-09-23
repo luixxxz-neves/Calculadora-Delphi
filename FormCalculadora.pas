@@ -274,7 +274,7 @@ var
    function ObterPrecedencia(Op: Char): Integer;
    begin
       if (Op = '+') or (Op = '-') then Result := 1
-      else if (Op = 'X') or (Op = '÷') then Result := 2
+      else if (Op = 'X') or (Op = 'ï¿½') then Result := 2
       else Result := 0;
    end;
 
@@ -295,7 +295,7 @@ var
       '+': SubTotal := NumEsquerda + NumDireita;
       '-': SubTotal := NumEsquerda - NumDireita;
       'X': SubTotal := NumEsquerda * NumDireita;
-      '÷': if NumDireita <> 0 then SubTotal := NumEsquerda / NumDireita;
+      'ï¿½': if NumDireita <> 0 then SubTotal := NumEsquerda / NumDireita;
    end;
       PushNumero(SubTotal);
    end;
@@ -316,7 +316,7 @@ begin
          if Caractere = '.' then Caractere := ',';
          NumeroAtualStr := NumeroAtualStr + Caractere;
       end
-      else if Caractere in ['+', '-', 'X', '÷'] then
+      else if Caractere in ['+', '-', 'X', 'ï¿½'] then
       begin
          if NumeroAtualStr <> '' then
          begin
